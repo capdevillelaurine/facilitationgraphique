@@ -146,7 +146,7 @@ textureSol.wrapT = THREE.RepeatWrapping;
 textureSol.repeat.y = - 1;
 
 //Text texture
-const matCapTexture = textureLoader.load('text_texture.png')
+const matCapTexture = textureLoader.load('text_Texture.png')
 matCapTexture.colorSpace = THREE.SRGBColorSpace
 
 /**
@@ -165,6 +165,7 @@ const solMaterial = new THREE.MeshBasicMaterial({ map: textureSol })
  * Fonts -----------------------------------------------------------------------
  */
 
+let textLaurineCapdeville = null
 const fontLoader = new FontLoader()
 fontLoader.load(
     '/fonts/helvetiker_regular.typeface.json',
@@ -185,13 +186,14 @@ fontLoader.load(
         textGeometry.computeBoundingBox()
         textGeometry.center()
         const material = new THREE.MeshMatcapMaterial({ color:'#3e0e0c', matcap: matCapTexture})
-        const text = new THREE.Mesh(textGeometry, material)
-        text.position.set(1.62, 0.52, 2.43)
-        text.rotateX(-1)
-        scene.add(text)
+        textLaurineCapdeville = new THREE.Mesh(textGeometry, material)
+        textLaurineCapdeville.position.set(1.62, 0.52, 2.43)
+        textLaurineCapdeville.rotateX(-1)
+        scene.add(textLaurineCapdeville)
     }
 )
 
+let textFacilitationGraphique = null
 fontLoader.load(
     '/fonts/helvetiker_regular.typeface.json',
     (font) => {
@@ -211,10 +213,10 @@ fontLoader.load(
         textGeometry.computeBoundingBox()
         textGeometry.center()
         const material = new THREE.MeshMatcapMaterial({ color:'#3e0e0c', matcap: matCapTexture})
-        const text = new THREE.Mesh(textGeometry, material)
-        text.position.set(2.43, 0.15, 3)
-        text.rotateX(-1)
-        scene.add(text)
+        textFacilitationGraphique = new THREE.Mesh(textGeometry, material)
+        textFacilitationGraphique.position.set(2.43, 0.15, 3)
+        textFacilitationGraphique.rotateX(-1)
+        scene.add(textFacilitationGraphique)
     }
 )
 
@@ -234,8 +236,6 @@ gltfLoader.load(
         gltf.scene.traverse((child) => {
             child.material = bakedMaterial
         })
-
-        console.log(gltf.scene.children)
 
         scene.add(gltf.scene);
         // Get each object
@@ -314,15 +314,18 @@ window.addEventListener('click', () => {
                 break
         }
 
-        console.log(currentIndex)
-        showOverlay(overlays.sliderOverlay)
-        mainScene = false;
-        if(sliders[currentSlider].length>1) {
-            next.style.display = "flex";
-            prev.style.display = "flex";
+        if(currentIntersect.object == textLaurineCapdeville){
+            console.log('nous sommes super')
         }else{
-            next.style.display = "none";
-            prev.style.display = "none";
+            showOverlay(overlays.sliderOverlay)
+            mainScene = false;
+            if(sliders[currentSlider].length>1) {
+                next.style.display = "flex";
+                prev.style.display = "flex";
+            }else{
+                next.style.display = "none";
+                prev.style.display = "none";
+            }  
         }
     }
 })
@@ -378,8 +381,9 @@ const tick = () => {
 
     // Cast a ray from the mouse and handle events
     raycaster.setFromCamera(mouse, camera)
-    if(tableauTroisMesh){
-        const objectsToTest = [tableauUnMesh, tableauDeuxMesh, tableauTroisMesh]
+    if(tableauTroisMesh && textLaurineCapdeville){
+        const objectsToTest = [tableauUnMesh, tableauDeuxMesh, tableauTroisMesh, textLaurineCapdeville]
+        //console.log(objectsToTest)
         const intersects = raycaster.intersectObjects(objectsToTest)
     
         if(intersects.length){
@@ -411,6 +415,11 @@ const tick = () => {
                     tableauTroisMesh.scale.set(1.2, 1.2, 1.2)
                     tableauTroisMesh.position.set(-2.55, 2.3, 0.4)
                     break
+                
+                case textLaurineCapdeville:
+                    textLaurineCapdeville.material.color.set('#f5e5ba')
+                    textFacilitationGraphique.material.color.set('#f5e5ba')
+                    break
             }
         }else{
             //set boards to original size & position
@@ -420,10 +429,10 @@ const tick = () => {
             tableauDeuxMesh.position.set(2.815455675125122, 2.1664178371429443, 0.2282574474811554)
             tableauTroisMesh.scale.set(1, 1, 1)
             tableauTroisMesh.position.set(-2.640939950942993, 2.1664178371429443, 0.21580806374549866)
+            textLaurineCapdeville.material.color.set('#3e0e0c')
+            textFacilitationGraphique.material.color.set('#3e0e0c')
         }
     }
-
-
     // Update controls
     controls.update()
 
