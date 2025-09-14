@@ -4,23 +4,27 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 import gsap from "gsap"
 
 /**
  * Base -----------------------------------------------------------------------
  */
 
-// Debug
-const gui = new GUI({
-    width: 400
-})
+/**
+ * Debug
+ */
+const gui = new GUI()
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
-
 // Scene
 const scene = new THREE.Scene()
+
+// Axes helper
+//const axesHelper = new THREE.AxesHelper()
+//scene.add(axesHelper)
 
 // Test pour que les tableaux ne soien tplus cliquablent quand des trcs sont affichés
 let mainScene = true
@@ -72,16 +76,16 @@ const hideOverlay = (overlay) => {
 //Images dans le slider affiché
 const sliders = {
     1: [
-        "imageTableau_EthicalQuestions.png",
-        "imageTableau_Definition.png",
-        "imageTableau_Complexification.png",
-        "imageTableau_Organization.png"
+        "/textures/imageTableau_EthicalQuestions.png",
+        "/textures/imageTableau_Definition.png",
+        "/textures/imageTableau_Complexification.png",
+        "/textures/imageTableau_Organization.png"
     ],
     2: [
-        "imageTableau_HumanOrgnoids.png"
+        "/textures/imageTableau_HumanOrgnoids.png"
     ],
     3: [
-        "imageTableau_MindMap.jpg"
+        "/textures/imageTableau_MindMap.jpg"
     ]
 };
 
@@ -114,33 +118,36 @@ dracoLoader.setDecoderPath('draco/')
 const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
 
-//Fonts
-const fontLoader = new FontLoader()
-
-
-
 /**
  * Textures -----------------------------------------------------------------------
  */
 
 // Backed scene texture
-const bakedTexture = textureLoader.load('textureScenePrincipale.jpg')
+const bakedTexture = textureLoader.load('/textures/textureScenePrincipale.jpg')
 bakedTexture.flipY = false
 bakedTexture.colorSpace = THREE.SRGBColorSpace
 
 //Tableaux textures
-const textureTableauUn = textureLoader.load('imageTableau_EthicalQuestions.png')
-const textureTableauDeux = textureLoader.load('imageTableau_HumanOrgnoids.png')
-const textureTableauTrois = textureLoader.load('imageTableau_MindMap.jpg')
+const textureTableauUn = textureLoader.load('/textures/imageTableau_EthicalQuestions.png')
+const textureTableauDeux = textureLoader.load('/textures/imageTableau_HumanOrgnoids.png')
+const textureTableauTrois = textureLoader.load('/textures/imageTableau_MindMap.jpg')
+const textureSol = textureLoader.load('/textures/texture_sol.jpg')
 textureTableauUn.colorSpace = THREE.SRGBColorSpace
 textureTableauDeux.colorSpace = THREE.SRGBColorSpace
 textureTableauTrois.colorSpace = THREE.SRGBColorSpace
+textureSol.colorSpace = THREE.SRGBColorSpace
 textureTableauUn.wrapT = THREE.RepeatWrapping;
 textureTableauUn.repeat.y = - 1;
 textureTableauDeux.wrapT = THREE.RepeatWrapping;
 textureTableauDeux.repeat.y = - 1;
 textureTableauTrois.wrapT = THREE.RepeatWrapping;
 textureTableauTrois.repeat.y = - 1;
+textureSol.wrapT = THREE.RepeatWrapping;
+textureSol.repeat.y = - 1;
+
+//Text texture
+const matCapTexture = textureLoader.load('/textures/matcaps/4.png')
+matCapTexture.colorSpace = THREE.SRGBColorSpace
 
 /**
  * Materials -----------------------------------------------------------------------
@@ -151,6 +158,67 @@ const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture })
 const tableauUnMaterial = new THREE.MeshBasicMaterial({ map: textureTableauUn })
 const tableauDeuxMaterial = new THREE.MeshBasicMaterial({ map: textureTableauDeux })
 const tableauTroisMaterial = new THREE.MeshBasicMaterial({ map: textureTableauTrois })
+const solMaterial = new THREE.MeshBasicMaterial({ map: textureSol })
+
+
+/**
+ * Fonts -----------------------------------------------------------------------
+ */
+
+const fontLoader = new FontLoader()
+fontLoader.load(
+    '/fonts/helvetiker_regular.typeface.json',
+    (font) => {
+        const textGeometry = new TextGeometry(
+            'Laurine Capdeville', {
+                font: font,
+                size: 0.5,
+                depth: 0.05,
+                curveSegments: 5,
+                bevelEnabled: true,
+                bevelThickness: 0.03,
+                bevelSize: 0.02,
+                bevelOffset: 0,
+                bevelSegments: 3
+            }
+        )
+        textGeometry.computeBoundingBox()
+        textGeometry.center()
+        const material = new THREE.MeshMatcapMaterial({ color:'#3e0e0c', matcap: matCapTexture})
+        const text = new THREE.Mesh(textGeometry, material)
+        text.position.set(1.62, 0.52, 2.43)
+        text.rotateX(-1)
+        scene.add(text)
+    }
+)
+
+fontLoader.load(
+    '/fonts/helvetiker_regular.typeface.json',
+    (font) => {
+        const textGeometry = new TextGeometry(
+            'Facilitation Graphique', {
+                font: font,
+                size: 0.3,
+                depth: 0.01,
+                curveSegments: 5,
+                bevelEnabled: true,
+                bevelThickness: 0.03,
+                bevelSize: 0.02,
+                bevelOffset: 0,
+                bevelSegments: 3
+            }
+        )
+        textGeometry.computeBoundingBox()
+        textGeometry.center()
+        const material = new THREE.MeshMatcapMaterial({ color:'#3e0e0c', matcap: matCapTexture})
+        const text = new THREE.Mesh(textGeometry, material)
+        text.position.set(2.43, 0.15, 3)
+        text.rotateX(-1)
+        scene.add(text)
+    }
+)
+
+
 
 /**
  * Model -----------------------------------------------------------------------
@@ -158,25 +226,29 @@ const tableauTroisMaterial = new THREE.MeshBasicMaterial({ map: textureTableauTr
 let tableauUnMesh = null
 let tableauDeuxMesh = null
 let tableauTroisMesh = null
+let solMesh = null
 gltfLoader.load(
-    'modelBlender.glb',
-    (gltf) =>
-    {
+    'facilitation_simple_sol.glb',
+    (gltf) => {
         
-        gltf.scene.traverse((child) =>
-        {
+        gltf.scene.traverse((child) => {
             child.material = bakedMaterial
         })
-        scene.add(gltf.scene)
+
+        console.log(gltf.scene.children)
+
+        scene.add(gltf.scene);
         // Get each object
         tableauUnMesh = gltf.scene.children.find((child) => child.name === 'Tableau_1')
         tableauDeuxMesh = gltf.scene.children.find((child) => child.name === 'Tabelau_2')
         tableauTroisMesh = gltf.scene.children.find((child) => child.name === 'Tabelau_2001')
+        solMesh = gltf.scene.children.find((child) => child.name === 'Plane')
 
         // Apply materials
         tableauUnMesh.material = tableauUnMaterial
         tableauDeuxMesh.material = tableauDeuxMaterial
         tableauTroisMesh.material = tableauTroisMaterial
+        solMesh.material = solMaterial
     }
 )
 
@@ -201,8 +273,7 @@ const sizes = {
     height: window.innerHeight
 }
 
-window.addEventListener('resize', () =>
-{
+window.addEventListener('resize', () => {
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
@@ -221,36 +292,32 @@ window.addEventListener('resize', () =>
  */
 const mouse = new THREE.Vector2()
 
-window.addEventListener('mousemove', (event) =>
-{
+window.addEventListener('mousemove', (event) => {
     mouse.x = event.clientX / sizes.width * 2 - 1
     mouse.y = - (event.clientY / sizes.height) * 2 + 1
 })
 
-window.addEventListener('click', () =>
-{
+window.addEventListener('click', () => {
     if(currentIntersect && mainScene){
         currentIndex = 0;
         switch(currentIntersect.object){
             case tableauUnMesh:
-                console.log('click on object 1')
                 currentSlider = 1;
                 break
 
             case tableauDeuxMesh:
-                console.log('click on object 2')
                 currentSlider = 2;
                 break
 
             case tableauTroisMesh:
-                console.log('click on object 3')
                 currentSlider = 3;
                 break
         }
+
         console.log(currentIndex)
         showOverlay(overlays.sliderOverlay)
         mainScene = false;
-        if(sliders[currentSlider].length>1){
+        if(sliders[currentSlider].length>1) {
             next.style.display = "flex";
             prev.style.display = "flex";
         }else{
@@ -266,13 +333,13 @@ window.addEventListener('click', () =>
 
 // Base camera
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(2.945081815365921, 5.274112703137292, 5.888552619312466)
+camera.position.set(0.6133588556553488, 6.940435675686704, 7.7259938781719715)
 scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-controls.target.set(-2.3595239729713784, 2.167683496199888, 1.553650428545754)
+controls.target.set(0.6298416927480969, 1.7228212278209427, 1.270452935860918)
 
 /**
  * Renderer -----------------------------------------------------------------------
@@ -292,9 +359,21 @@ renderer.setClearColor(0x000000, 0.0);
  */
 
 const clock = new THREE.Clock()
+let mouvement = 0.005;
 
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
+    console.log(controls.target)
+    console.log(camera.position)
+   /** //Screen Animation
+    if (camera.position.x < 1){
+        mouvement = 0.005
+    }
+    if(camera.position.x > 3){
+        mouvement = -0.005;
+    }
+    camera.position.x = camera.position.x + mouvement;
+    */
 
     // Cast a ray from the mouse and handle events
     raycaster.setFromCamera(mouse, camera)
@@ -318,28 +397,28 @@ const tick = () => {
         if(currentIntersect && mainScene){
             switch(currentIntersect.object) {
                 case tableauUnMesh:
-                    tableauUnMesh.scale.set(1.2, 1.2, 1.2)
-                    tableauUnMesh.position.set(-3.1, 2.4, 0.75)
+                    //tableauUnMesh.scale.set(1.2, 1.2, 1.2)
+                    //tableauUnMesh.position.set(-3.1, 2.4, 0.75)
                     break
 
                 case tableauDeuxMesh:
-                    tableauDeuxMesh.scale.set(1.2, 1.2, 1.2)
-                    tableauDeuxMesh.position.set(-0.75, 2.3, -0.7)
+                    //tableauDeuxMesh.scale.set(1.2, 1.2, 1.2)
+                    //tableauDeuxMesh.position.set(-0.75, 2.3, -0.7)
                     break
 
                 case tableauTroisMesh:
-                    tableauTroisMesh.scale.set(1.2, 1.2, 1.2)
-                    tableauTroisMesh.position.set(-4.15, 2.25, 3.3)
+                    //tableauTroisMesh.scale.set(1.2, 1.2, 1.2)
+                    //tableauTroisMesh.position.set(-4.15, 2.25, 3.3)
                     break
             }
         }else{
             //set boards to original size & position
             tableauUnMesh.scale.set(1, 1, 1)
-            tableauUnMesh.position.set(-3.153846502304077, 2.373289108276367, 0.6512370109558105)
+            //tableauUnMesh.position.set(-3.153846502304077, 2.373289108276367, 0.6512370109558105)
             tableauDeuxMesh.scale.set(1, 1, 1)
-            tableauDeuxMesh.position.set( -0.7122294902801514, 2.1664178371429443, -0.8150078058242798)
+            //tableauDeuxMesh.position.set( -0.7122294902801514, 2.1664178371429443, -0.8150078058242798)
             tableauTroisMesh.scale.set(1, 1, 1)
-            tableauTroisMesh.position.set(-4.269794464111328, 2.1664178371429443, 3.322157859802246)
+            //tableauTroisMesh.position.set(-4.269794464111328, 2.1664178371429443, 3.322157859802246)
         }
     }
 
