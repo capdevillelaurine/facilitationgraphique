@@ -14,7 +14,7 @@ import gsap from "gsap"
 /**
  * Debug
  */
-const gui = new GUI()
+//const gui = new GUI()
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -76,16 +76,16 @@ const hideOverlay = (overlay) => {
 //Images dans le slider affiché
 const sliders = {
     1: [
-        "/textures/imageTableau_EthicalQuestions.png",
-        "/textures/imageTableau_Definition.png",
-        "/textures/imageTableau_Complexification.png",
-        "/textures/imageTableau_Organization.png"
+        "textures/imageTableau_EthicalQuestions.png",
+        "textures/imageTableau_Definition.png",
+        "textures/imageTableau_Complexification.png",
+        "textures/imageTableau_Organization.png"
     ],
     2: [
-        "/textures/imageTableau_HumanOrgnoids.png"
+        "textures/imageTableau_HumanOrgnoids.png"
     ],
     3: [
-        "/textures/imageTableau_MindMap.jpg"
+        "textures/imageTableau_MindMap.jpg"
     ]
 };
 
@@ -123,15 +123,15 @@ gltfLoader.setDRACOLoader(dracoLoader)
  */
 
 // Backed scene texture
-const bakedTexture = textureLoader.load('/textures/textureScenePrincipale.jpg')
+const bakedTexture = textureLoader.load('textures/textureScenePrincipale.jpg')
 bakedTexture.flipY = false
 bakedTexture.colorSpace = THREE.SRGBColorSpace
 
 //Tableaux textures
-const textureTableauUn = textureLoader.load('/textures/imageTableau_EthicalQuestions.png')
-const textureTableauDeux = textureLoader.load('/textures/imageTableau_HumanOrgnoids.png')
-const textureTableauTrois = textureLoader.load('/textures/imageTableau_MindMap.jpg')
-const textureSol = textureLoader.load('/textures/texture_sol.jpg')
+const textureTableauUn = textureLoader.load('textures/imageTableau_EthicalQuestions.png')
+const textureTableauDeux = textureLoader.load('textures/imageTableau_HumanOrgnoids.png')
+const textureTableauTrois = textureLoader.load('textures/imageTableau_MindMap.jpg')
+const textureSol = textureLoader.load('textures/texture_sol.jpg')
 textureTableauUn.colorSpace = THREE.SRGBColorSpace
 textureTableauDeux.colorSpace = THREE.SRGBColorSpace
 textureTableauTrois.colorSpace = THREE.SRGBColorSpace
@@ -146,7 +146,7 @@ textureSol.wrapT = THREE.RepeatWrapping;
 textureSol.repeat.y = - 1;
 
 //Text texture
-const matCapTexture = textureLoader.load('/textures/matcaps/4.png')
+const matCapTexture = textureLoader.load('textures/matcaps/4.png')
 matCapTexture.colorSpace = THREE.SRGBColorSpace
 
 /**
@@ -361,10 +361,11 @@ renderer.setClearColor(0x000000, 0.0);
 const clock = new THREE.Clock()
 let mouvement = 0.005;
 
+
+let unfois  = true;
+
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
-    console.log(controls.target)
-    console.log(camera.position)
    /** //Screen Animation
     if (camera.position.x < 1){
         mouvement = 0.005
@@ -397,28 +398,28 @@ const tick = () => {
         if(currentIntersect && mainScene){
             switch(currentIntersect.object) {
                 case tableauUnMesh:
-                    //tableauUnMesh.scale.set(1.2, 1.2, 1.2)
-                    //tableauUnMesh.position.set(-3.1, 2.4, 0.75)
+                    tableauUnMesh.scale.set(1.2, 1.2, 1.2)
+                    tableauUnMesh.position.set(0.11, 2.3, -0.5)
                     break
 
                 case tableauDeuxMesh:
-                    //tableauDeuxMesh.scale.set(1.2, 1.2, 1.2)
-                    //tableauDeuxMesh.position.set(-0.75, 2.3, -0.7)
+                    tableauDeuxMesh.scale.set(1.2, 1.2, 1.2)
+                    tableauDeuxMesh.position.set(2.8, 2.3, 0.29)
                     break
 
                 case tableauTroisMesh:
-                    //tableauTroisMesh.scale.set(1.2, 1.2, 1.2)
-                    //tableauTroisMesh.position.set(-4.15, 2.25, 3.3)
+                    tableauTroisMesh.scale.set(1.2, 1.2, 1.2)
+                    tableauTroisMesh.position.set(-2.55, 2.3, 0.4)
                     break
             }
         }else{
             //set boards to original size & position
             tableauUnMesh.scale.set(1, 1, 1)
-            //tableauUnMesh.position.set(-3.153846502304077, 2.373289108276367, 0.6512370109558105)
+            tableauUnMesh.position.set(0.11383968591690063, 2.373289108276367, -0.6732069253921509)
             tableauDeuxMesh.scale.set(1, 1, 1)
-            //tableauDeuxMesh.position.set( -0.7122294902801514, 2.1664178371429443, -0.8150078058242798)
+            tableauDeuxMesh.position.set(2.815455675125122, 2.1664178371429443, 0.2282574474811554)
             tableauTroisMesh.scale.set(1, 1, 1)
-            //tableauTroisMesh.position.set(-4.269794464111328, 2.1664178371429443, 3.322157859802246)
+            tableauTroisMesh.position.set(-2.640939950942993, 2.1664178371429443, 0.21580806374549866)
         }
     }
 
