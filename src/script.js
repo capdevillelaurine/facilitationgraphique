@@ -76,16 +76,16 @@ const hideOverlay = (overlay) => {
 //Images dans le slider affiché
 const sliders = {
     1: [
-        "textures/imageTableau_EthicalQuestions.png",
-        "textures/imageTableau_Definition.png",
-        "textures/imageTableau_Complexification.png",
-        "textures/imageTableau_Organization.png"
+        "imageTableau_EthicalQuestions.png",
+        "imageTableau_Definition.png",
+        "imageTableau_Complexification.png",
+        "imageTableau_Organization.png"
     ],
     2: [
-        "textures/imageTableau_HumanOrgnoids.png"
+        "imageTableau_HumanOrgnoids.png"
     ],
     3: [
-        "textures/imageTableau_MindMap.jpg"
+        "imageTableau_MindMap.jpg"
     ]
 };
 
@@ -123,15 +123,15 @@ gltfLoader.setDRACOLoader(dracoLoader)
  */
 
 // Backed scene texture
-const bakedTexture = textureLoader.load('textures/textureScenePrincipale.jpg')
+const bakedTexture = textureLoader.load('textureScenePrincipale.jpg')
 bakedTexture.flipY = false
 bakedTexture.colorSpace = THREE.SRGBColorSpace
 
 //Tableaux textures
-const textureTableauUn = textureLoader.load('textures/imageTableau_EthicalQuestions.png')
-const textureTableauDeux = textureLoader.load('textures/imageTableau_HumanOrgnoids.png')
-const textureTableauTrois = textureLoader.load('textures/imageTableau_MindMap.jpg')
-const textureSol = textureLoader.load('textures/texture_sol.jpg')
+const textureTableauUn = textureLoader.load('imageTableau_EthicalQuestions.png')
+const textureTableauDeux = textureLoader.load('imageTableau_HumanOrgnoids.png')
+const textureTableauTrois = textureLoader.load('imageTableau_MindMap.jpg')
+const textureSol = textureLoader.load('texture_sol.jpg')
 textureTableauUn.colorSpace = THREE.SRGBColorSpace
 textureTableauDeux.colorSpace = THREE.SRGBColorSpace
 textureTableauTrois.colorSpace = THREE.SRGBColorSpace
@@ -146,7 +146,7 @@ textureSol.wrapT = THREE.RepeatWrapping;
 textureSol.repeat.y = - 1;
 
 //Text texture
-const matCapTexture = textureLoader.load('textures/matcaps/4.png')
+const matCapTexture = textureLoader.load('text_texture.png')
 matCapTexture.colorSpace = THREE.SRGBColorSpace
 
 /**
