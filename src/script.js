@@ -33,6 +33,7 @@ let mainScene = true
  * Orverlay pages -----------------------------------------------------------------------
  */
 
+//Les sliders --------------------------------------------------------
 const overlays = {
     sliderOverlay: document.querySelector(".overlay.sliders")
 }
@@ -94,14 +95,46 @@ let currentIndex = 0;
 let currentSlider = 0;
 
 next.addEventListener("click", () => {
+    console.log('slider next');
     currentIndex = (currentIndex + 1) % sliders[currentSlider].length;
     sliderImage.src = sliders[currentSlider][currentIndex];
 });
 
 prev.addEventListener("click", () => {
+    console.log('slider prev');
     currentIndex = (currentIndex - 1 + sliders[currentSlider].length) % sliders[currentSlider].length;
     sliderImage.src = sliders[currentSlider][currentIndex];
 });
+
+
+//Les texts ------------------------------------------------------------------
+const overlaytext = document.getElementById('overtext');
+//const open = document.getElementById('openModal');
+const close = document.getElementById('closeModal');
+
+function showModal(){
+    overlaytext.style.display = "flex";
+    gsap.set(overlaytext, { opacity: 0});
+    gsap.to(overlaytext, {
+        opacity:1,
+        duration: 0.5,
+    })
+}
+
+function hideModal(){
+     gsap.to(overlaytext, {
+        opacity:0,
+        duration: 0.5,
+        onComplete: () => {
+        overlaytext.style.display = "none"
+        }
+    })
+}
+
+//open.addEventListener('click', showModal);
+close.addEventListener('click', hideModal);
+
+//showModal();
 
 /**
  * Loaders -----------------------------------------------------------------------
@@ -125,16 +158,16 @@ gltfLoader.setDRACOLoader(dracoLoader)
 // Backed scene texture
 const bakedTexture = textureLoader.load('textureScenePrincipale.jpg')
 bakedTexture.flipY = false
-bakedTexture.colorSpace = THREE.SRGBColorSpace
+bakedTexture.colorSpace = THREE.SRGBColorSpace;
 
 //Tableaux textures
-const textureTableauUn = textureLoader.load('imageTableau_EthicalQuestions.png')
-const textureTableauDeux = textureLoader.load('imageTableau_HumanOrgnoids.png')
-const textureTableauTrois = textureLoader.load('imageTableau_MindMap.jpg')
-const textureSol = textureLoader.load('texture_sol.jpg')
-textureTableauUn.colorSpace = THREE.SRGBColorSpace
-textureTableauDeux.colorSpace = THREE.SRGBColorSpace
-textureTableauTrois.colorSpace = THREE.SRGBColorSpace
+const textureTableauUn = textureLoader.load('imageTableau_EthicalQuestions.png');
+const textureTableauDeux = textureLoader.load('imageTableau_HumanOrgnoids.png');
+const textureTableauTrois = textureLoader.load('imageTableau_MindMap.jpg');
+const textureSol = textureLoader.load('texture_sol.jpg');
+textureTableauUn.colorSpace = THREE.SRGBColorSpace;
+textureTableauDeux.colorSpace = THREE.SRGBColorSpace;
+textureTableauTrois.colorSpace = THREE.SRGBColorSpace;
 textureSol.colorSpace = THREE.SRGBColorSpace
 textureTableauUn.wrapT = THREE.RepeatWrapping;
 textureTableauUn.repeat.y = - 1;
@@ -198,7 +231,7 @@ fontLoader.load(
     '/fonts/helvetiker_regular.typeface.json',
     (font) => {
         const textGeometry = new TextGeometry(
-            'Facilitation Graphique', {
+            'Synthese Graphique', {
                 font: font,
                 size: 0.3,
                 depth: 0.01,
@@ -312,6 +345,10 @@ window.addEventListener('click', () => {
             case tableauTroisMesh:
                 currentSlider = 3;
                 break
+
+            case textLaurineCapdeville:
+                showModal();
+                break
         }
 
         if(currentIntersect.object == textLaurineCapdeville){
@@ -335,14 +372,19 @@ window.addEventListener('click', () => {
  */
 
 // Base camera
-const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(0.6133588556553488, 6.940435675686704, 7.7259938781719715)
-scene.add(camera)
+const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 100);
+camera.position.set(0.6133588556553488, 6.940435675686704, 7.7259938781719715);
+scene.add(camera);
 
 // Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
-controls.target.set(0.6298416927480969, 1.7228212278209427, 1.270452935860918)
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.minDistance = 5;
+controls.maxDistance = 9;
+controls.minPolarAngle = Math.PI / 4;
+controls.maxPolarAngle = Math.PI / 2;
+controls.target.set(0.6298416927480969, 1.7228212278209427, 1.270452935860918);
+
 
 /**
  * Renderer -----------------------------------------------------------------------
@@ -362,30 +404,28 @@ renderer.setClearColor(0x000000, 0.0);
  */
 
 const clock = new THREE.Clock()
-let mouvement = 0.005;
-
-
-let unfois  = true;
+let mouvement = 0.002;
 
 const tick = () => {
+    console.log(controls.getAzimuthalAngle());
     const elapsedTime = clock.getElapsedTime()
-   /** //Screen Animation
-    if (camera.position.x < 1){
-        mouvement = 0.005
+
+    //Screen Animation---------------------------------------------------------------
+    if (camera.position.x < -0.5){
+        mouvement = 0.002;
     }
-    if(camera.position.x > 3){
-        mouvement = -0.005;
+    if(camera.position.x > 1.5){
+        mouvement = -0.002;
     }
     camera.position.x = camera.position.x + mouvement;
-    */
 
-    // Cast a ray from the mouse and handle events
+    // Cast a ray from the mouse and handle events-----------------------------------
     raycaster.setFromCamera(mouse, camera)
     if(tableauTroisMesh && textLaurineCapdeville){
         const objectsToTest = [tableauUnMesh, tableauDeuxMesh, tableauTroisMesh, textLaurineCapdeville]
-        //console.log(objectsToTest)
         const intersects = raycaster.intersectObjects(objectsToTest)
     
+        //Changement de l'aspect de la souris
         if(intersects.length){
             if(!currentIntersect){
                 document.body.style.cursor = "pointer"
@@ -398,8 +438,9 @@ const tick = () => {
             }
         currentIntersect = null
         }
+
         //to make boards bigger on mouse intersection
-        if(currentIntersect && mainScene){
+        if(currentIntersect && mainScene && controls.getAzimuthalAngle() < 0.95 && controls.getAzimuthalAngle() > -0.8){
             switch(currentIntersect.object) {
                 case tableauUnMesh:
                     tableauUnMesh.scale.set(1.2, 1.2, 1.2)
@@ -433,6 +474,7 @@ const tick = () => {
             textFacilitationGraphique.material.color.set('#3e0e0c')
         }
     }
+
     // Update controls
     controls.update()
 
