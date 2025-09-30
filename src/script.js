@@ -33,6 +33,8 @@ let mainScene = true
  * Orverlay pages -----------------------------------------------------------------------
  */
 
+
+
 //Les sliders --------------------------------------------------------
 const overlays = {
     sliderOverlay: document.querySelector(".overlay.sliders")
@@ -108,11 +110,18 @@ prev.addEventListener("click", () => {
 
 
 //Les texts ------------------------------------------------------------------
+//Bouton +
+const fab = document.getElementById('fabOpen');
 const overlaytext = document.getElementById('overtext');
 //const open = document.getElementById('openModal');
 const close = document.getElementById('closeModal');
 
+
 function showModal(){
+    //fab.setAttribute('aria-expanded','true');
+    //fab.setAttribute('aria-pressed','true');
+    fab.style.display = "none";
+    document.documentElement.style.overflow = 'hidden';
     overlaytext.style.display = "flex";
     gsap.set(overlaytext, { opacity: 0});
     gsap.to(overlaytext, {
@@ -122,7 +131,10 @@ function showModal(){
 }
 
 function hideModal(){
-     gsap.to(overlaytext, {
+    //fab.setAttribute('aria-expanded','false');
+    //fab.setAttribute('aria-pressed','false');
+    fab.style.display = "inline-grid";
+    gsap.to(overlaytext, {
         opacity:0,
         duration: 0.5,
         onComplete: () => {
@@ -131,6 +143,7 @@ function hideModal(){
     })
 }
 
+fab.addEventListener('click', ()=>{ showModal(); });
 //open.addEventListener('click', showModal);
 close.addEventListener('click', hideModal);
 
@@ -201,7 +214,7 @@ const solMaterial = new THREE.MeshBasicMaterial({ map: textureSol })
 let textLaurineCapdeville = null
 const fontLoader = new FontLoader()
 fontLoader.load(
-    '/fonts/helvetiker_regular.typeface.json',
+    'fonts/helvetiker_regular.typeface.json',
     (font) => {
         const textGeometry = new TextGeometry(
             'Laurine Capdeville', {
@@ -228,7 +241,7 @@ fontLoader.load(
 
 let textFacilitationGraphique = null
 fontLoader.load(
-    '/fonts/helvetiker_regular.typeface.json',
+    'fonts/helvetiker_regular.typeface.json',
     (font) => {
         const textGeometry = new TextGeometry(
             'Synthese Graphique', {
@@ -367,6 +380,45 @@ window.addEventListener('click', () => {
     }
 })
 
+window.addEventListener('touchstart', () => {
+    if(currentIntersect && mainScene){
+        currentIndex = 0;
+        switch(currentIntersect.object){
+            case tableauUnMesh:
+                currentSlider = 1;
+                break
+
+            case tableauDeuxMesh:
+                currentSlider = 2;
+                break
+
+            case tableauTroisMesh:
+                currentSlider = 3;
+                break
+
+            case textLaurineCapdeville:
+                showModal();
+                break
+        }
+
+        if(currentIntersect.object == textLaurineCapdeville){
+            console.log('nous sommes super')
+        }else{
+            showOverlay(overlays.sliderOverlay)
+            mainScene = false;
+            if(sliders[currentSlider].length>1) {
+                next.style.display = "flex";
+                prev.style.display = "flex";
+            }else{
+                next.style.display = "none";
+                prev.style.display = "none";
+            }  
+        }
+    }
+})
+
+
+
 /**
  * Camera -----------------------------------------------------------------------
  */
@@ -407,7 +459,6 @@ const clock = new THREE.Clock()
 let mouvement = 0.002;
 
 const tick = () => {
-    console.log(controls.getAzimuthalAngle());
     const elapsedTime = clock.getElapsedTime()
 
     //Screen Animation---------------------------------------------------------------

@@ -20,7 +20,7 @@ body {
     align-items: center;
     height: 100vh;
     min-height:100vh; 
-    padding:40px
+    padding:40px;
 }
 
 .webgl {
@@ -29,6 +29,40 @@ body {
     left: 0;
     outline: none;
 }
+
+/* + button */
+.fab-plus{
+    position:fixed;
+    left:18px;
+    top:18px;
+    width:var(--btn-size);
+    height:var(--btn-size);
+    border-radius:calc(var(--radius));
+    display:inline-grid;
+    place-items:center;
+    background: #3e0e0c;
+    box-shadow:var(--shadow);
+    border:1px solid rgba(0,0,0,0.06);
+    cursor: pointer;
+    z-index:1000;
+    transition:transform .12s ease, box-shadow .12s ease;
+}
+.fab-plus:active{transform:scale(.97)}
+
+
+.fab-plus .icon{
+position:relative;
+width:28px;height:28px;
+}
+.fab-plus .icon:before,
+.fab-plus .icon:after{
+content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--accent);border-radius:4px;
+}
+.fab-plus .icon:before{width:2px;height:18px}
+.fab-plus .icon:after{height:2px;width:18px}
+
+
+.fab-plus[aria-pressed="true"]{box-shadow:0 10px 30px rgba(255,0,0,0.15)}
 
 /* Overlay */
 .overlay {
@@ -97,6 +131,9 @@ body {
   --accent: #f1f5f9;
   --radius: 12px;
   --gap: 16px;
+  --btn-size: 64px;
+  --radius: 12px;
+  --shadow: 0 6px 18px rgba(0,0,0,0.18);
 }
 
 .overtext{
